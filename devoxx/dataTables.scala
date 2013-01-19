@@ -87,7 +87,7 @@ def generateSourceFile(testCount: Int, targetDir: File): File = {
     targetOut.write("        )\n\n")
     
     targetOut.write("      forAll(examples) { (left, right, sum) => \n")
-    targetOut.write("        left + right must equal (sum)\n")
+    targetOut.write("        left + right must be (sum)\n")
     targetOut.write("      }\n")
     
     targetOut.write("    }\n")

@@ -68,7 +68,7 @@ def assert2TestBodyFun(x: Int): String = "assert(" + x + " + 1 == " + (x+1) + ")
 // Using assert(===)
 def assert3TestBodyFun(x: Int): String = "assert(" + x + " + 1 === " + (x+1) + ")"
 // Using must matchers
-def mustTestBodyFun(x: Int): String = x + " + 1 must equal (" + (x+1) + ")"
+def mustTestBodyFun(x: Int): String = x + " + 1 must be (" + (x+1) + ")"
 
 // Spec 
 def specTestDefFun(x: Int): String = "def `increment " + x + "`"
@@ -100,7 +100,7 @@ class ExampleSpec extends Specification {
       
     for (x <- 1 to testCount) {
       targetOut.write("    \"increment " + x + "\" in {\n")
-      targetOut.write("      " + x + " + 1 must equalTo (" + (x+1) + ")\n")
+      targetOut.write("      " + x + " + 1 must be (" + (x+1) + ")\n")
       targetOut.write("    }\n")
     }
      
@@ -135,7 +135,7 @@ class ExampleSpec extends Specification { def is =
     targetOut.write("    end\n")
         
     for (x <- 1 to testCount) 
-      targetOut.write("def e" + x + " = " + x + " + 1 must equalTo (" + (x+1) + ")\n")
+      targetOut.write("def e" + x + " = " + x + " + 1 must be (" + (x+1) + ")\n")
       
     targetOut.write("""
 }""")

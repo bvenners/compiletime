@@ -1,6 +1,8 @@
-set -x
+JAVA_OPTS="-server -Xmx1024M -Xms128M"
+export JAVA_OPTS
 scala tenTestsPerFile.scala
-. addmem.sh
+JAVA_OPTS="-server -Xmx2048M -Xms256M"
+export JAVA_OPTS
 scala allTestsInOneFile.scala
 scala testsIn100Files.scala
 scala dataTables.scala
