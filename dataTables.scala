@@ -181,13 +181,18 @@ def getFileAndByteCount(srcDir: File) = {
 }
 
 def deleteDir(targetDir: File) {
-  targetDir.listFiles.foreach { child => 
-    if (child.isFile) 
-      child.delete()
-    else
-      deleteDir(child)
+  val children = targetDir.listFiles
+  if (children != null) {
+    targetDir.listFiles.foreach { child => 
+      if (child.isFile) 
+        child.delete()
+      else
+        deleteDir(child)
+    }
+    targetDir.delete()
   }
-  targetDir.delete()
+  else
+    println("Unable to list files in " + targetDir.getAbsolutePath)
 }
 
 def getOutputDir(baseOutputDir: File, testCount: Int): File = {
@@ -285,7 +290,7 @@ if (scalaVersion != "unknown") {
     }
   }
   catch {
-    case e => 
+    case e: Throwable => 
       e.printStackTrace()
   }
   finally {
@@ -323,7 +328,7 @@ if (scalaVersion != "unknown") {
     }
   }
   catch {
-    case e => 
+    case e: Throwable => 
       e.printStackTrace()
   }
   finally {
