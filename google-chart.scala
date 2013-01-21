@@ -132,3 +132,10 @@ if (allMethodTestsInOneFileStatDir.exists)
   generateChartFile(allMethodTestsInOneFileStatDir, new File(allMethodTestsInOneFileDir, "allMethodTestsInOneFile-graph.html"))
 else
   println("allMethodTestsInOneFile/stat directory does not exist, allMethodTestsInOneFile/allMethodTestsInOneFile-graph.html will not be generated.")
+  
+val assertTestsInOneFileDir = new File("assertTestsInOneFile")
+val assertTestsInOneFileStatDir = new File(assertTestsInOneFileDir, "stat")
+if (assertTestsInOneFileStatDir.exists)
+  generateChartFile(assertTestsInOneFileStatDir, new File(assertTestsInOneFileDir, "assertTestsInOneFile-graph.html"))
+else
+  println("assertTestsInOneFile/stat directory does not exist, assertTestsInOneFile/assertTestsInOneFile-graph.html will not be generated.")
