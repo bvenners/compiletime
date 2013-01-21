@@ -6,4 +6,5 @@ export JAVA_OPTS
 scala allTestsInOneFile.scala
 scala testsIn100Files.scala
 scala dataTables.scala
+scala allMethodTestsInOneFile.scala
 scala google-chart.scala

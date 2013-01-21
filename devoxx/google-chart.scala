@@ -125,3 +125,10 @@ if (dataTablesStatDir.exists)
   generateChartFile(dataTablesStatDir, new File(dataTablesDir, "dataTables-graph.html"))
 else
   println("dataTables/stat directory does not exist, dataTables/dataTables-graph.html will not be generated.")
+  
+val allMethodTestsInOneFileDir = new File("allMethodTestsInOneFile")
+val allMethodTestsInOneFileStatDir = new File(allMethodTestsInOneFileDir, "stat")
+if (allMethodTestsInOneFileStatDir.exists)
+  generateChartFile(allMethodTestsInOneFileStatDir, new File(allMethodTestsInOneFileDir, "allMethodTestsInOneFile-graph.html"))
+else
+  println("allMethodTestsInOneFile/stat directory does not exist, allMethodTestsInOneFile/allMethodTestsInOneFile-graph.html will not be generated.")
