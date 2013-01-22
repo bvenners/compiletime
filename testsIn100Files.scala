@@ -63,28 +63,17 @@ def generateSourceFile(testCount: Int, targetDir: File, fileNumber: Int, package
   targetFile
 }
 
-def generateMultipleSourceFiles(testCount: Int, maxTestCount:Int, targetDir: File, packageName: String, importStatements: Array[String], 
+def generateMultipleSourceFiles(testCount: Int, targetDir: File, packageName: String, importStatements: Array[String], 
                        extendsName: String, withNames: Array[String], scopeBracket: Boolean, scopeDef: String, 
                        testDefFun: (Int) => String, testBodyFun: (Int) => String): List[String] = {
   targetDir.mkdirs()
-  val totalFiles = testCount / maxTestCount
-  val remainder = testCount % maxTestCount
+  val totalFiles = 100
 
-  val sourceFiles = 
-    if (totalFiles == 0)
-      List(generateSourceFile(testCount, targetDir, 0, packageName, importStatements, 
-                              extendsName, withNames, scopeBracket, scopeDef, testDefFun, testBodyFun).getAbsolutePath)
-    else
-      for (fileNumber <- 1 to totalFiles) yield
-        generateSourceFile(maxTestCount, targetDir, fileNumber, packageName, importStatements, 
-                           extendsName, withNames, scopeBracket, scopeDef, testDefFun, testBodyFun).getAbsolutePath
+  val sourceFiles = for (fileNumber <- 1 to totalFiles) yield
+                       generateSourceFile(testCount, targetDir, fileNumber, packageName, importStatements, 
+                                          extendsName, withNames, scopeBracket, scopeDef, testDefFun, testBodyFun).getAbsolutePath
 
-  // For remainder
-  if (remainder > 0)
-    List(generateSourceFile(remainder, targetDir, totalFiles + 1, packageName, importStatements, 
-                            extendsName, withNames, scopeBracket, scopeDef, testDefFun, testBodyFun).getAbsolutePath) ++ sourceFiles
-  else
-    sourceFiles.toList
+  sourceFiles.toList
 }
 
 // Using assert(==)
@@ -138,23 +127,13 @@ class ExampleSpec""" + fileNumber + """ extends Specification {
   targetFile
 }
 
-def generateMultipleSpecs2Mutable(testCount: Int, maxTestCount: Int, targetDir: File): List[String] = {
+def generateMultipleSpecs2Mutable(testCount: Int, targetDir: File): List[String] = {
   targetDir.mkdirs()
-  val totalFiles = testCount / maxTestCount
-  val remainder = testCount % maxTestCount
+  val totalFiles = 100
 
-  val sourceFiles = 
-    if (totalFiles == 0)
-      List(generateSpecs2Mutable(testCount, targetDir, 0).getAbsolutePath)
-    else
-      for (fileNumber <- 1 to totalFiles) yield
-        generateSpecs2Mutable(maxTestCount, targetDir, fileNumber).getAbsolutePath
-
-  // For remainder
-  if (remainder > 0)
-    List(generateSpecs2Mutable(remainder, targetDir, totalFiles + 1).getAbsolutePath) ++ sourceFiles
-  else
-    sourceFiles.toList
+  val sourceFiles = for (fileNumber <- 1 to totalFiles) yield generateSpecs2Mutable(testCount, targetDir, fileNumber).getAbsolutePath
+  
+  sourceFiles.toList
 }
 
 // Specs2 immutable specification
@@ -190,23 +169,13 @@ class ExampleSpec""" + fileNumber + """ extends Specification { def is =
   targetFile
 }
 
-def generateMultipleSpecs2Immutable(testCount: Int, maxTestCount: Int, targetDir: File): List[String] = {
+def generateMultipleSpecs2Immutable(testCount: Int, targetDir: File): List[String] = {
   targetDir.mkdirs()
-  val totalFiles = testCount / maxTestCount
-  val remainder = testCount % maxTestCount
+  val totalFiles = 100
 
-  val sourceFiles = 
-    if (totalFiles == 0)
-      List(generateSpecs2Immutable(testCount, targetDir, 0).getAbsolutePath)
-    else
-      for (fileNumber <- 1 to totalFiles) yield 
-        generateSpecs2Immutable(maxTestCount, targetDir, fileNumber).getAbsolutePath
+  val sourceFiles = for (fileNumber <- 1 to totalFiles) yield generateSpecs2Immutable(testCount, targetDir, fileNumber).getAbsolutePath
 
-  // For remainder
-  if (remainder > 0)
-    List(generateSpecs2Immutable(remainder, targetDir, totalFiles + 1).getAbsolutePath) ++ sourceFiles
-  else
-    sourceFiles.toList
+  sourceFiles.toList
 }
 
 def compile(srcFiles: List[String], classpath: String, targetDir: String) = {
@@ -247,13 +216,18 @@ def getFileAndByteCount(srcDir: File) = {
 }
 
 def deleteDir(targetDir: File) {
-  targetDir.listFiles.foreach { child => 
-    if (child.isFile) 
-      child.delete()
-    else
-      deleteDir(child)
+  val children = targetDir.listFiles
+  if (children != null) {
+    targetDir.listFiles.foreach { child => 
+      if (child.isFile) 
+        child.delete()
+      else
+        deleteDir(child)
+    }
+    targetDir.delete()
   }
-  targetDir.delete()
+  else
+    println("Unable to list files in " + targetDir.getAbsolutePath)
 }
 
 def getOutputDir(baseOutputDir: File, testCount: Int): File = {
@@ -279,7 +253,7 @@ if (scalaVersion != "unknown") {
   if (!specs2ScalazJar.exists)
     downloadFile("https://oss.sonatype.org/content/repositories/releases/org/specs2/specs2-scalaz-core_" + scalaVersion + "/" + scalazVersion + "/specs2-scalaz-core_" + scalaVersion + "-" + scalazVersion + ".jar", specs2ScalazJar)
 
-  val baseDir = new File("tenTestsPerFile")
+  val baseDir = new File("testsIn100Files")
   if (baseDir.exists)
     deleteDir(baseDir)
     
@@ -323,16 +297,7 @@ if (scalaVersion != "unknown") {
        70, 
        80, 
        90, 
-      100, 
-      200, 
-      300, 
-      400, 
-      500, 
-      600, 
-      700, 
-      800, 
-      900, 
-     1000
+      100
     )
   
   val headers = "TestCount," + testCounts.mkString(",") + "\n"
@@ -356,7 +321,6 @@ if (scalaVersion != "unknown") {
 
           val generatedSrc = generateMultipleSourceFiles(
                                  testCount, 
-                                 10, // maximum number of tests in a file
                                  new File(generatedDir, style.className + testType.shortName), // target dir
                                  style.className + testType.shortName, // package name
                                  testType.importNames, // imports
@@ -380,7 +344,7 @@ if (scalaVersion != "unknown") {
         }
       }
       catch {
-        case e => 
+        case e: Throwable => 
           e.printStackTrace()
       }
       finally {
@@ -407,7 +371,7 @@ if (scalaVersion != "unknown") {
       val outputDir = getOutputDir(baseOutputDir, testCount)
       val generatedDir = new File(baseGeneratedDir, "generated-" + testCount)
 
-      val generatedSrc = generateMultipleSpecs2Mutable(testCount, 10, new File(generatedDir, "mSpecification"))
+      val generatedSrc = generateMultipleSpecs2Mutable(testCount, new File(generatedDir, "mSpecification"))
       val duration = compile(generatedSrc, specs2Classpath, outputDir.getAbsolutePath)
       durationFile.write("," + duration)
       durationFile.flush()
@@ -420,7 +384,7 @@ if (scalaVersion != "unknown") {
     }
   }
   catch {
-    case e => 
+    case e: Throwable => 
       e.printStackTrace()
   }
   finally {
@@ -445,7 +409,7 @@ if (scalaVersion != "unknown") {
       val outputDir = getOutputDir(baseOutputDir, testCount)
       val generatedDir = new File(baseGeneratedDir, "generated-" + testCount)
 
-      val generatedSrc = generateMultipleSpecs2Immutable(testCount, 10, new File(generatedDir, "iSpecification"))
+      val generatedSrc = generateMultipleSpecs2Immutable(testCount, new File(generatedDir, "iSpecification"))
       val duration = compile(generatedSrc, specs2Classpath, outputDir.getAbsolutePath)
       durationFile.write("," + duration)
       durationFile.flush()
@@ -458,7 +422,7 @@ if (scalaVersion != "unknown") {
     }
   }
   catch {
-    case e => 
+    case e: Throwable => 
       e.printStackTrace()
   }
   finally {
