@@ -187,10 +187,24 @@ if (scalaVersion != "unknown") {
     Array(
       Style(
         name = "scalatest.Spec",
-        shortName = "Must",
-        importNames = Array("org.scalatest._"),
+        shortName = "Spec",
+        importNames = Array("org.scalatest.Spec"),
         classAnnotations = Array.empty,
         extendsName = Some("Spec"),
+        mixinNames = Array.empty,
+        scopeBracket = false,
+        scopeDef = "",
+        testDefFun = specTestDefFun,
+        testBodyFun = expectResultBodyFun,
+        classpath = scalaTestClasspath
+      ),
+
+      Style(
+        name = "scalatest.SpecLike",
+        shortName = "SpecLike",
+        importNames = Array("org.scalatest.SpecLike"),
+        classAnnotations = Array.empty,
+        extendsName = Some("SpecLike"),
         mixinNames = Array.empty,
         scopeBracket = false,
         scopeDef = "",
