@@ -198,7 +198,6 @@ if (scalaVersion != "unknown") {
         testBodyFun = expectResultBodyFun,
         classpath = scalaTestClasspath
       ),
-
       Style(
         name = "scalatest.SpecLike",
         shortName = "SpecLike",
@@ -212,11 +211,32 @@ if (scalaVersion != "unknown") {
         testBodyFun = expectResultBodyFun,
         classpath = scalaTestClasspath
       ),
-
-      Style("JUnit", "JUnit", Array("org.junit.Assert.assertEquals", "org.junit.Test"), 
-            Array.empty, None, Array.empty, false, "", junitTestDefFun, assertEqualsBodyFun, junitClasspath), 
-      Style("TestNG", "TestNG", Array("org.testng.annotations.Test", "org.testng.AssertJUnit.assertEquals"), 
-            Array.empty, None, Array.empty, false, "", testngTestDefFun, assertEqualsBodyFun, testngClasspath)      
+      Style(
+        name = "JUnit",
+        shortName = "JUnit",
+        importNames = Array("org.junit.Assert.assertEquals", "org.junit.Test"),
+        classAnnotations = Array.empty,
+        extendsName = None,
+        mixinNames = Array.empty,
+        scopeBracket = false,
+        scopeDef = "",
+        testDefFun = junitTestDefFun,
+        testBodyFun = assertEqualsBodyFun,
+        classpath = junitClasspath
+      ),
+      Style(
+        name = "TestNG",
+        shortName = "TestNG",
+        importNames = Array("org.testng.annotations.Test", "org.testng.AssertJUnit.assertEquals"),
+        classAnnotations = Array.empty,
+        extendsName = None,
+        mixinNames = Array.empty,
+        scopeBracket = false,
+        scopeDef = "",
+        testDefFun = testngTestDefFun,
+        testBodyFun = assertEqualsBodyFun,
+        classpath = testngClasspath
+      )
     )
 
   val testCounts = 
