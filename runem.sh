@@ -1,3 +1,4 @@
+set -x
 JAVA_OPTS="-server -Xmx1024M -Xms128M"
 export JAVA_OPTS
 scala tenTestsPerFile.scala

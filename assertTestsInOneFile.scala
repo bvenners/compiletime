@@ -14,7 +14,7 @@ def scalaVersion = {
 }
 */
 def scalaVersion = "2.10"
-val scalaTestVersion = "2.0.M5b"
+val scalaTestVersion = "2.0.M6-SNAP7"
 val specs2Version = "1.13"
 val scalazVersion = "6.0.1"
 

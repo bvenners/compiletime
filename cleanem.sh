@@ -1,0 +1,2 @@
+
+rm -rf allMethodTestsInOneFile allTestsInOneFile assertTestsInOneFile dataTables tenTestsPerFile testsIn100Files

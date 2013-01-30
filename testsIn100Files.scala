@@ -14,7 +14,7 @@ def scalaVersion = {
 }
 */
 def scalaVersion = "2.10"
-val scalaTestVersion = "2.0.M5b"
+val scalaTestVersion = "2.0.M6-SNAP7"
 val specs2Version = "1.13"
 val scalazVersion = "6.0.1"
 
@@ -113,7 +113,7 @@ class ExampleSpec""" + fileNumber + """ extends Specification {
       
     for (x <- 1 to testCount) {
       targetOut.write("    \"increment " + x + "\" in {\n")
-      targetOut.write("      " + x + " + 1 must be (" + (x+1) + ")\n")
+      targetOut.write("      " + x + " + 1 must be equalTo (" + (x+1) + ")\n")
       targetOut.write("    }\n")
     }
      
@@ -157,7 +157,7 @@ class ExampleSpec""" + fileNumber + """ extends Specification { def is =
     targetOut.write("    end\n")
         
     for (x <- 1 to testCount) 
-      targetOut.write("def e" + x + " = " + x + " + 1 must be (" + (x+1) + ")\n")
+      targetOut.write("def e" + x + " = " + x + " + 1 must be equalTo (" + (x+1) + ")\n")
       
     targetOut.write("""
 }""")
@@ -282,7 +282,7 @@ if (scalaVersion != "unknown") {
 
   val testTypes = 
     Array(
-      TestType("with MustMatchers", "Must", Array("org.scalatest._"), Array("MustMatchers"), mustTestBodyFun)
+      TestType("with MustMatchers", "Must", Array("org.scalatest._", "matchers.MustMatchers._"), Array("MustMatchers"), mustTestBodyFun)
     )
 
   val testCounts = 

@@ -13,7 +13,7 @@ import scala.math.pow
 }*/
 
 def scalaVersion = "2.10"
-val scalaTestVersion = "2.0.M5b"
+val scalaTestVersion = "2.0.M6-SNAP7"
 val junitVersion = "4.11"  // JUnit depends on hamcrestVersion
 val hamcrestVersion = "1.3"
 val testngVersion = "6.8"
@@ -74,7 +74,7 @@ def expectResultBodyFun(x: Int): String = "expectResult(" + (x+1) + ") { " + x +
 def assertEqualsBodyFun(x: Int): String = "assertEquals(" + (x+1) + ", " + x + " + 1)"
 
 // Spec 
-def specTestDefFun(x: Int): String = "def `increment " + x + "`"
+def specTestDefFun(x: Int): String = "def increment" + x + "()"
 // WordSpec
 def wordSpecTestDefFun(x: Int): String = "\"increment " + x + "\" in"
 // JUnit
@@ -185,12 +185,22 @@ if (scalaVersion != "unknown") {
   
   val styles = 
     Array(
-      Style("scalatest.Spec", "Must", Array("org.scalatest._"), Array.empty, Some("Spec"), Array("MustMatchers"), true, 
-           "object `Scala can ` ", specTestDefFun, expectResultBodyFun, scalaTestClasspath), 
-      Style("scalatest.WordSpec", "Must", Array("org.scalatest._"), Array.empty, Some("WordSpec"), Array("MustMatchers"), true, 
-           "\"Scala\" can ", wordSpecTestDefFun, expectResultBodyFun, scalaTestClasspath), 
-      Style("JUnit", "JUnit", Array("org.junit.Assert.assertEquals", "org.junit.Test", "org.junit.runner.RunWith", "org.junit.runners.JUnit4"), 
-            Array("RunWith(classOf[JUnit4])"), None, Array.empty, false, "", junitTestDefFun, assertEqualsBodyFun, junitClasspath), 
+      Style(
+        name = "scalatest.Spec",
+        shortName = "Must",
+        importNames = Array("org.scalatest._"),
+        classAnnotations = Array.empty,
+        extendsName = Some("Spec"),
+        mixinNames = Array.empty,
+        scopeBracket = false,
+        scopeDef = "",
+        testDefFun = specTestDefFun,
+        testBodyFun = expectResultBodyFun,
+        classpath = scalaTestClasspath
+      ),
+
+      Style("JUnit", "JUnit", Array("org.junit.Assert.assertEquals", "org.junit.Test"), 
+            Array.empty, None, Array.empty, false, "", junitTestDefFun, assertEqualsBodyFun, junitClasspath), 
       Style("TestNG", "TestNG", Array("org.testng.annotations.Test", "org.testng.AssertJUnit.assertEquals"), 
             Array.empty, None, Array.empty, false, "", testngTestDefFun, assertEqualsBodyFun, testngClasspath)      
     )
