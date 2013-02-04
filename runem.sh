@@ -9,4 +9,5 @@ scala testsIn100Files.scala
 scala dataTables.scala
 scala allMethodTestsInOneFile.scala
 scala assertTestsInOneFile.scala
+scala allClassTestsInOneFile.scala
 scala google-chart.scala
