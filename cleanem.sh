@@ -1,2 +1,2 @@
 
-rm -rf allMethodTestsInOneFile allTestsInOneFile assertTestsInOneFile dataTables tenTestsPerFile testsIn100Files
+rm -rf allMethodTestsInOneFile allTestsInOneFile assertTestsInOneFile dataTables tenTestsPerFile testsIn100Files allClassTestsInOneFile
