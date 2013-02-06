@@ -13,10 +13,12 @@ import scala.math.pow
 }*/
 
 def scalaVersion = "2.10"
-val scalaTestVersion = "2.0.M6-SNAP7"
+val scalaTestVersion = "2.0.M6-SNAP8"
 val junitVersion = "4.11"  // JUnit depends on hamcrestVersion
 val hamcrestVersion = "1.3"
 val testngVersion = "6.8"
+val specs2Version = "1.13"
+val scalazVersion = "6.0.1"
 
 def downloadFile(urlString: String, targetFile: File) {
   println("Downloading " + urlString)
@@ -72,7 +74,7 @@ def generateSourceFile(testCount: Int, targetDir: File, packageName: String, imp
 
 def expectResultBodyFun(x: Int): String = "expectResult(" + (x+1) + ") { " + x + " + 1 }"
 def assertEqualsBodyFun(x: Int): String = "assertEquals(" + (x+1) + ", " + x + " + 1)"
-
+def specs2BodyFun(x: Int): String = "      " + x + " + 1 must be equalTo (" + (x+1) + ")\n"
 // Spec 
 def specTestDefFun(x: Int): String = "def increment" + x + "()"
 // WordSpec
@@ -81,6 +83,8 @@ def wordSpecTestDefFun(x: Int): String = "\"increment " + x + "\" in"
 def junitTestDefFun(x: Int): String = "@Test def increment" + x + "()"
 // TestNG
 def testngTestDefFun(x: Int): String = "@Test def increment" + x + "()"
+// specs2 mutable.Specification
+def specs2MutableTestDefFun(x: Int): String = "\"increment " + x + "\" in"
 
 def compile(srcFile: String, classpath: String, targetDir: String) = {
   import scala.collection.JavaConversions._
@@ -150,6 +154,14 @@ if (scalaVersion != "unknown") {
     downloadFile("https://oss.sonatype.org/content/repositories/releases/org/scalatest/scalatest_" + scalaVersion + "/" + scalaTestVersion + "/scalatest_" + scalaVersion + "-" + scalaTestVersion + ".jar", scalatestJar)
 
     
+  val specs2Jar = new File("specs2_" + scalaVersion + "-" + specs2Version + ".jar")
+  if (!specs2Jar.exists)
+    downloadFile("https://oss.sonatype.org/content/repositories/releases/org/specs2/specs2_" + scalaVersion + "/" + specs2Version + "/specs2_" + scalaVersion + "-" + specs2Version + ".jar", specs2Jar)
+
+  val specs2ScalazJar = new File("specs2-scalaz-core_" + scalaVersion + "-" + scalazVersion + ".jar")
+  if (!specs2ScalazJar.exists)
+    downloadFile("https://oss.sonatype.org/content/repositories/releases/org/specs2/specs2-scalaz-core_" + scalaVersion + "/" + scalazVersion + "/specs2-scalaz-core_" + scalaVersion + "-" + scalazVersion + ".jar", specs2ScalazJar)
+
   val junitJar = new File("junit-" + junitVersion + ".jar")
   if (!junitJar.exists)
     downloadFile("http://repo1.maven.org/maven2/junit/junit/" + junitVersion + "/junit-" + junitVersion + ".jar", junitJar)
@@ -174,6 +186,7 @@ if (scalaVersion != "unknown") {
   val fileSizeFile = new FileWriter(new File(statDir, "filesize.csv"))
 
   val scalaTestClasspath = scalatestJar.getName
+  val specs2Classpath = specs2Jar.getName + File.pathSeparator + specs2ScalazJar.getName
   val junitClasspath = junitJar.getName + File.pathSeparator + hamcrestJar.getName
   val testngClasspath = testngJar.getName + File.pathSeparator + junitClasspath
 
@@ -199,17 +212,17 @@ if (scalaVersion != "unknown") {
         classpath = scalaTestClasspath
       ),
       Style(
-        name = "scalatest.SpecLike",
-        shortName = "SpecLike",
-        importNames = Array("org.scalatest.SpecLike"),
+        name = "mutable.Specification",
+        shortName = "Specification",
+        importNames = Array("org.specs2.mutable._"),
         classAnnotations = Array.empty,
-        extendsName = Some("SpecLike"),
+        extendsName = Some("Specification"),
         mixinNames = Array.empty,
         scopeBracket = false,
         scopeDef = "",
-        testDefFun = specTestDefFun,
-        testBodyFun = expectResultBodyFun,
-        classpath = scalaTestClasspath
+        testDefFun = specs2MutableTestDefFun,
+        testBodyFun = specs2BodyFun,
+        classpath = specs2Classpath
       ),
       Style(
         name = "JUnit",
