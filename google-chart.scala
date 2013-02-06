@@ -70,7 +70,7 @@ def generateLineChart(charts: Array[Chart]) =
     }
   </body>
 </html>
-    
+
 def generateChartFile(srcDir: File, targetFile: File) {
 
   val durationData = readCsv(srcDir, "duration.csv")
@@ -78,14 +78,46 @@ def generateChartFile(srcDir: File, targetFile: File) {
   val fileCountData = readCsv(srcDir, "filecount.csv")
 
   val graphFile = new FileWriter(targetFile)
-  
+
+  println(durationData.minTestCount + " " + durationData.maxTestCount + " " + durationData.rows.length)
+  val durationSmall =
+    if (durationData.maxTestCount != 1000 && durationData.rows.length != 11) 
+      List(Chart("duration100", "Compile time (milliseconds)", filterCsv(durationData, _.name.toLong <= 100)))
+    else
+      List.empty[Chart]
+
+  val durationLarge =
+    if (durationData.maxTestCount > 100)
+      List[Chart](Chart("duration500", "Compile time (milliseconds)", filterCsv(durationData, (row: DataRow) => row.name.toLong == 0 || row.name.toLong >= 100)))
+    else
+      List.empty[Chart]
+
+  val fileSizeSmall =
+    if (durationData.maxTestCount != 1000 && durationData.rows.length != 11) 
+      List(Chart("filesize100", "File Size (bytes)", filterCsv(fileSizeData, _.name.toLong <= 100)))
+    else
+      List.empty[Chart]
+
+  val fileSizeLarge = 
+    if (fileSizeData.maxTestCount > 100)
+      List[Chart](Chart("filesize500", "File Size (bytes)", filterCsv(fileSizeData, (row: DataRow) => row.name.toLong == 0 || row.name.toLong >= 100)))
+    else
+      List.empty[Chart]
+
+  val fileCountSmall =
+    if (durationData.maxTestCount != 1000 && durationData.rows.length != 11) 
+      List(Chart("filecount100", "File Count", filterCsv(fileCountData, _.name.toLong <= 100)))
+    else
+      List.empty[Chart]
+
+  val fileCountLarge =
+    if (fileCountData.maxTestCount > 100)
+      List[Chart](Chart("filecount500", "File Count", filterCsv(fileCountData, (row: DataRow) => row.name.toLong == 0 || row.name.toLong >= 100)))
+    else
+      List.empty[Chart]
+
   val chartList: List[Chart] = 
-    List(Chart("duration100", "Compile time (miliseconds)", filterCsv(durationData, _.name.toLong <= 100))) ::: 
-    (if (durationData.maxTestCount > 100) List[Chart](Chart("duration500", "Compile time (miliseconds)", filterCsv(durationData, (row: DataRow) => row.name.toLong == 0 || row.name.toLong >= 100))) else List.empty[Chart]) :::
-    List(Chart("filesize100", "File Size (bytes)", filterCsv(fileSizeData, _.name.toLong <= 100))) ::: 
-    (if (fileSizeData.maxTestCount > 100) List[Chart](Chart("filesize500", "File Size (bytes)", filterCsv(fileSizeData, (row: DataRow) => row.name.toLong == 0 || row.name.toLong >= 100))) else List.empty[Chart]) ::: 
-    List(Chart("filecount100", "File Count", filterCsv(fileCountData, _.name.toLong <= 100))) ::: 
-    (if (fileCountData.maxTestCount > 100) List[Chart](Chart("filecount500", "File Count", filterCsv(fileCountData, (row: DataRow) => row.name.toLong == 0 || row.name.toLong >= 100))) else List.empty[Chart])
+   durationSmall ::: durationLarge ::: fileSizeSmall ::: fileSizeLarge ::: fileCountSmall ::: fileCountLarge
 
   graphFile.write(
     generateLineChart(
