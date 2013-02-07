@@ -71,7 +71,12 @@ def generateLineChart(charts: Array[Chart]) =
   </body>
 </html>
 
-def generateChartFile(srcDir: File, targetFile: File) {
+abstract class WhichChart
+case object FirstChart extends WhichChart
+case object SecondChart extends WhichChart
+case object BothCharts extends WhichChart
+
+def generateChartFile(srcDir: File, targetFile: File, whichChart: WhichChart = BothCharts) {
 
   val durationData = readCsv(srcDir, "duration.csv")
   val fileSizeData = readCsv(srcDir, "filesize.csv")
@@ -80,44 +85,44 @@ def generateChartFile(srcDir: File, targetFile: File) {
   val graphFile = new FileWriter(targetFile)
 
   println(durationData.minTestCount + " " + durationData.maxTestCount + " " + durationData.rows.length)
-  val durationSmall =
-    if (durationData.maxTestCount != 1000 && durationData.rows.length != 11) 
-      List(Chart("duration100", "Compile time (milliseconds)", filterCsv(durationData, _.name.toLong <= 100)))
-    else
-      List.empty[Chart]
+  val durationFirst =
+    whichChart match {
+      case SecondChart => List.empty[Chart]
+      case _ => List(Chart("duration100", "Compile time (milliseconds)", filterCsv(durationData, _.name.toLong <= 100)))
+    }
 
-  val durationLarge =
-    if (durationData.maxTestCount > 100)
-      List[Chart](Chart("duration500", "Compile time (milliseconds)", filterCsv(durationData, (row: DataRow) => row.name.toLong == 0 || row.name.toLong >= 100)))
-    else
-      List.empty[Chart]
+  val durationSecond =
+    whichChart match {
+      case FirstChart => List.empty[Chart]
+      case _ => List[Chart](Chart("duration500", "Compile time (milliseconds)", filterCsv(durationData, (row: DataRow) => row.name.toLong == 0 || row.name.toLong >= 100)))
+    }
 
-  val fileSizeSmall =
-    if (durationData.maxTestCount != 1000 && durationData.rows.length != 11) 
-      List(Chart("filesize100", "File Size (bytes)", filterCsv(fileSizeData, _.name.toLong <= 100)))
-    else
-      List.empty[Chart]
+  val fileSizeFirst =
+    whichChart match {
+      case SecondChart => List.empty[Chart]
+      case _ => List(Chart("filesize100", "File Size (bytes)", filterCsv(fileSizeData, _.name.toLong <= 100)))
+    }
 
-  val fileSizeLarge = 
-    if (fileSizeData.maxTestCount > 100)
-      List[Chart](Chart("filesize500", "File Size (bytes)", filterCsv(fileSizeData, (row: DataRow) => row.name.toLong == 0 || row.name.toLong >= 100)))
-    else
-      List.empty[Chart]
+  val fileSizeSecond = 
+    whichChart match {
+      case FirstChart => List.empty[Chart]
+      case _ => List[Chart](Chart("filesize500", "File Size (bytes)", filterCsv(fileSizeData, (row: DataRow) => row.name.toLong == 0 || row.name.toLong >= 100)))
+   }
 
-  val fileCountSmall =
-    if (durationData.maxTestCount != 1000 && durationData.rows.length != 11) 
-      List(Chart("filecount100", "File Count", filterCsv(fileCountData, _.name.toLong <= 100)))
-    else
-      List.empty[Chart]
+  val fileCountFirst =
+    whichChart match {
+      case SecondChart => List.empty[Chart]
+      case _ => List(Chart("filecount100", "File Count", filterCsv(fileCountData, _.name.toLong <= 100)))
+    }
 
-  val fileCountLarge =
-    if (fileCountData.maxTestCount > 100)
-      List[Chart](Chart("filecount500", "File Count", filterCsv(fileCountData, (row: DataRow) => row.name.toLong == 0 || row.name.toLong >= 100)))
-    else
-      List.empty[Chart]
+  val fileCountSecond =
+    whichChart match {
+      case FirstChart => List.empty[Chart]
+      case _ => List[Chart](Chart("filecount500", "File Count", filterCsv(fileCountData, (row: DataRow) => row.name.toLong == 0 || row.name.toLong >= 100)))
+    }
 
   val chartList: List[Chart] = 
-   durationSmall ::: durationLarge ::: fileSizeSmall ::: fileSizeLarge ::: fileCountSmall ::: fileCountLarge
+   durationFirst ::: durationSecond ::: fileSizeFirst ::: fileSizeSecond ::: fileCountFirst ::: fileCountSecond
 
   graphFile.write(
     generateLineChart(
@@ -147,7 +152,7 @@ else
 val testsIn100FilesDir = new File("testsIn100Files")
 val testsIn100FilesStatDir = new File(testsIn100FilesDir, "stat")
 if (testsIn100FilesStatDir.exists)
-  generateChartFile(testsIn100FilesStatDir, new File(testsIn100FilesDir, "testsIn100Files-graph.html"))
+  generateChartFile(testsIn100FilesStatDir, new File(testsIn100FilesDir, "testsIn100Files-graph.html"), FirstChart)
 else
   println("testsIn100Files/stat directory does not exist, testsIn100Files/tenTestsPerFile-graph.html will not be generated.")
 
@@ -161,7 +166,7 @@ else
 val allMethodTestsInOneFileDir = new File("allMethodTestsInOneFile")
 val allMethodTestsInOneFileStatDir = new File(allMethodTestsInOneFileDir, "stat")
 if (allMethodTestsInOneFileStatDir.exists)
-  generateChartFile(allMethodTestsInOneFileStatDir, new File(allMethodTestsInOneFileDir, "allMethodTestsInOneFile-graph.html"))
+  generateChartFile(allMethodTestsInOneFileStatDir, new File(allMethodTestsInOneFileDir, "allMethodTestsInOneFile-graph.html"), SecondChart)
 else
   println("allMethodTestsInOneFile/stat directory does not exist, allMethodTestsInOneFile/allMethodTestsInOneFile-graph.html will not be generated.")
   

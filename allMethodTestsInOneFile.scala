@@ -199,32 +199,6 @@ if (scalaVersion != "unknown") {
   val styles = 
     Array(
       Style(
-        name = "scalatest.Spec",
-        shortName = "Spec",
-        importNames = Array("org.scalatest.Spec"),
-        classAnnotations = Array.empty,
-        extendsName = Some("Spec"),
-        mixinNames = Array.empty,
-        scopeBracket = false,
-        scopeDef = "",
-        testDefFun = specTestDefFun,
-        testBodyFun = expectResultBodyFun,
-        classpath = scalaTestClasspath
-      ),
-      Style(
-        name = "mutable.Specification",
-        shortName = "Specification",
-        importNames = Array("org.specs2.mutable._"),
-        classAnnotations = Array.empty,
-        extendsName = Some("Specification"),
-        mixinNames = Array.empty,
-        scopeBracket = false,
-        scopeDef = "",
-        testDefFun = specs2MutableTestDefFun,
-        testBodyFun = specs2BodyFun,
-        classpath = specs2Classpath
-      ),
-      Style(
         name = "JUnit",
         shortName = "JUnit",
         importNames = Array("org.junit.Assert.assertEquals", "org.junit.Test"),
@@ -249,6 +223,32 @@ if (scalaVersion != "unknown") {
         testDefFun = testngTestDefFun,
         testBodyFun = assertEqualsBodyFun,
         classpath = testngClasspath
+      ),
+      Style(
+        name = "scalatest.Spec",
+        shortName = "Spec",
+        importNames = Array("org.scalatest.Spec"),
+        classAnnotations = Array.empty,
+        extendsName = Some("Spec"),
+        mixinNames = Array.empty,
+        scopeBracket = false,
+        scopeDef = "",
+        testDefFun = specTestDefFun,
+        testBodyFun = expectResultBodyFun,
+        classpath = scalaTestClasspath
+      ),
+      Style(
+        name = "mutable.Specification",
+        shortName = "Specification",
+        importNames = Array("org.specs2.mutable._"),
+        classAnnotations = Array.empty,
+        extendsName = Some("Specification"),
+        mixinNames = Array.empty,
+        scopeBracket = false,
+        scopeDef = "",
+        testDefFun = specs2MutableTestDefFun,
+        testBodyFun = specs2BodyFun,
+        classpath = specs2Classpath
       )
     )
 
