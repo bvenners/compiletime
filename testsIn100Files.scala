@@ -282,7 +282,7 @@ if (scalaVersion != "unknown") {
 
   val testTypes = 
     Array(
-      TestType("with MustMatchers", "Must", Array("org.scalatest._", "matchers.MustMatchers._"), Array("MustMatchers"), mustTestBodyFun)
+      TestType("with MustMatchers", "Must", Array("org.scalatest._", "matchers.MustMatchers._"), Array.empty, mustTestBodyFun)
     )
 
   val testCounts = 

@@ -74,9 +74,9 @@ def generateSourceFile(testCount: Int, targetDir: File, packageName: String, imp
 
 def expectResultBodyFun(x: Int): String = "expectResult(" + (x+1) + ") { " + x + " + 1 }"
 def assertEqualsBodyFun(x: Int): String = "assertEquals(" + (x+1) + ", " + x + " + 1)"
-def specs2BodyFun(x: Int): String = "      " + x + " + 1 must be equalTo (" + (x+1) + ")\n"
+def specs2BodyFun(x: Int): String = "" + x + " + 1 must be equalTo (" + (x+1) + ")"
 // Spec 
-def specTestDefFun(x: Int): String = "def increment" + x + "()"
+def specTestDefFun(x: Int): String = "def `increment " + x + "`"
 // WordSpec
 def wordSpecTestDefFun(x: Int): String = "\"increment " + x + "\" in"
 // JUnit
