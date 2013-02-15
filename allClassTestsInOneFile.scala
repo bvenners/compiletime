@@ -100,7 +100,7 @@ class ExampleSpec extends MutableSpecificationClass {
       
     for (x <- 1 to testCount) {
       targetOut.write("    \"increment " + x + "\" in {\n")
-      targetOut.write("      " + x + " + 1 must be equalTo (" + (x+1) + ")\n")
+      targetOut.write("      " + x + " + 1 must beEqualTo (" + (x+1) + ")\n")
       targetOut.write("    }\n")
     }
      
@@ -135,7 +135,7 @@ class ExampleSpec extends SpecificationClass { def is =
     targetOut.write("    end\n")
         
     for (x <- 1 to testCount) 
-      targetOut.write("def e" + x + " = " + x + " + 1 must be equalTo (" + (x+1) + ")\n")
+      targetOut.write("def e" + x + " = " + x + " + 1 must beEqualTo (" + (x+1) + ")\n")
       
     targetOut.write("""
 }""")
