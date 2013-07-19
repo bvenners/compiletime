@@ -183,3 +183,10 @@ if (allClassTestsInOneFileStatDir.exists)
   generateChartFile(allClassTestsInOneFileStatDir, new File(allClassTestsInOneFileDir, "allClassTestsInOneFile-graph.html"))
 else
   println("allClassTestsInOneFile/stat directory does not exist, allClassTestsInOneFile/allClassTestsInOneFile-graph.html will not be generated.")
+
+val assertMacroDir = new File("assertMacro")
+val assertMacroStatDir = new File(assertMacroDir, "stat")
+if (assertMacroStatDir.exists) 
+  generateChartFile(assertMacroStatDir, new File(assertMacroDir, "assertMacro-graph.html"))
+else
+  println("assertMacro/stat directory does not exist, assertMacro/assertMacro-graph.html will not be generated.")
