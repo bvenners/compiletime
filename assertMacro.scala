@@ -37,10 +37,10 @@ def generateSourceFile(testCount: Int, targetDir: File, packageName: String, imp
   targetFile
 }
 
+// Using assert(==)
+def assertEqual2TestBodyFun(x: Int): String = "assert(" + x + " + 1 == " + (x+1) + ")"
 // Using assert(===)
-def assert3TestBodyFun(x: Int): String = "assert(" + x + " + 1 === " + (x+1) + ")"
-// Using assertNew(==)
-def macroAssertTestBodyFun(x: Int): String = "newAssert(" + x + " + 1 == " + (x+1) + ")"
+def assertEqual3TestBodyFun(x: Int): String = "assert(" + x + " + 1 === " + (x+1) + ")"
 
 // Spec 
 def specTestDefFun(x: Int): String = "def `increment " + x + "`"
@@ -103,10 +103,14 @@ def getOutputDir(baseOutputDir: File, testCount: Int): File = {
   outputDir
 }
 
-val scalatestJar = new File("scalatest-macro.jar")
+val scalatestOldJar = new File("scalatest-old.jar")
+val scalatestMacroJar = new File("scalatest-macro.jar")
 
-if (!scalatestJar.exists)
-  throw new RuntimeException(scalatestJar.getAbsolutePath + " not found.")
+if (!scalatestOldJar.exists)
+  throw new RuntimeException(scalatestOldJar.getAbsolutePath + " not found.")
+
+if (!scalatestMacroJar.exists)
+  throw new RuntimeException(scalatestMacroJar.getAbsolutePath + " not found.")
 
 val baseDir = new File("assertMacro")
 if (baseDir.exists)
@@ -119,8 +123,6 @@ val durationFile = new FileWriter(new File(statDir, "duration.csv"))
 val fileCountFile = new FileWriter(new File(statDir, "filecount.csv"))
 val fileSizeFile = new FileWriter(new File(statDir, "filesize.csv"))
 
-val scalaTestClasspath = scalatestJar.getName
-
 val baseOutputDir = new File(baseDir, "output")
 baseOutputDir.mkdirs()
 
@@ -128,7 +130,7 @@ val baseGeneratedDir = new File(baseDir, "generated")
 baseGeneratedDir.mkdirs()
 
 case class Style(name: String, className: String, scopeBracket: Boolean, scopeDef: String, testDefFun: (Int) => String)
-case class TestType(name: String, shortName: String, importNames: Array[String], mixinNames: Array[String], testBodyFun: (Int) => String)
+case class TestType(name: String, shortName: String, importNames: Array[String], mixinNames: Array[String], testBodyFun: (Int) => String, scalatestJar: File)
 
 val styles = 
   Array(
@@ -137,8 +139,10 @@ val styles =
 
 val testTypes = 
   Array(
-    TestType("Triple Equal", "TripleEqual", Array("org.scalatest._"), Array.empty, assert3TestBodyFun),
-    TestType("Macro Assert", "MacroAssert", Array("org.scalatest._"), Array.empty, macroAssertTestBodyFun)
+    TestType("Old asert(==)", "OldEqual2", Array("org.scalatest._"), Array.empty, assertEqual2TestBodyFun, scalatestOldJar),
+    TestType("Macro assert(==)", "MacroEqual2", Array("org.scalatest._"), Array.empty, assertEqual2TestBodyFun, scalatestMacroJar), 
+    TestType("Old asert(===)", "OldEqual3", Array("org.scalatest._"), Array.empty, assertEqual3TestBodyFun, scalatestOldJar),
+    TestType("Macro assert(===)", "MacroEqual3", Array("org.scalatest._"), Array.empty, assertEqual3TestBodyFun, scalatestMacroJar)
   )
   
 val testCounts = 
@@ -195,7 +199,7 @@ styles.foreach { style =>
                              style.scopeDef, // scope definition
                              style.testDefFun, 
                              testType.testBodyFun)
-        val duration = compile(generatedSrc.getAbsolutePath, scalaTestClasspath, outputDir.getAbsolutePath)
+        val duration = compile(generatedSrc.getAbsolutePath, testType.scalatestJar.getName, outputDir.getAbsolutePath)
         durationFile.write("," + duration)
         durationFile.flush()
 
