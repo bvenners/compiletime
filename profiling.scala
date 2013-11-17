@@ -25,12 +25,12 @@ How to sort: cat st.out | sort -nr -k 2 > stSorted.out
 */
 
 def scalaVersion = "2.10"
-val scalaTestVersion = "2.0.M6-SNAP8"
+val scalaTestVersion = "2.0"
 val junitVersion = "4.11"  // JUnit depends on hamcrestVersion
 val hamcrestVersion = "1.3"
 val testngVersion = "6.8"
-val specs2Version = "1.13"
-val scalazVersion = "6.0.1"
+val specs2Version = "2.3.4"
+val scalazVersion = "7.0.4"
 
 val scalacAspects = "/Users/bv/nobkp/delus/scalac-aspects/scalac-aspects"
 
@@ -193,9 +193,9 @@ if (scalaVersion != "unknown") {
   if (!specs2Jar.exists)
     downloadFile("https://oss.sonatype.org/content/repositories/releases/org/specs2/specs2_" + scalaVersion + "/" + specs2Version + "/specs2_" + scalaVersion + "-" + specs2Version + ".jar", specs2Jar)
 
-  val specs2ScalazJar = new File("specs2-scalaz-core_" + scalaVersion + "-" + scalazVersion + ".jar")
+  val specs2ScalazJar = new File("scalaz-core_" + scalaVersion + "-" + scalazVersion + ".jar")
   if (!specs2ScalazJar.exists)
-    downloadFile("https://oss.sonatype.org/content/repositories/releases/org/specs2/specs2-scalaz-core_" + scalaVersion + "/" + scalazVersion + "/specs2-scalaz-core_" + scalaVersion + "-" + scalazVersion + ".jar", specs2ScalazJar)
+    downloadFile("https://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-core_" + scalaVersion + "/" + scalazVersion + "/scalaz-core_" + scalaVersion + "-" + scalazVersion + ".jar", specs2ScalazJar)
 
   val junitJar = new File("junit-" + junitVersion + ".jar")
   if (!junitJar.exists)

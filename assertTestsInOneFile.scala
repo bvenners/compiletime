@@ -14,9 +14,9 @@ def scalaVersion = {
 }
 */
 def scalaVersion = "2.10"
-val scalaTestVersion = "2.0.M6-SNAP8"
-val specs2Version = "1.13"
-val scalazVersion = "6.0.1"
+val scalaTestVersion = "2.0"
+val specs2Version = "2.3.4"
+val scalazVersion = "7.0.4"
 
 def downloadFile(urlString: String, targetFile: File) {
   println("Downloading " + urlString)
