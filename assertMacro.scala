@@ -4,6 +4,22 @@ import java.nio.channels.Channels
 import scala.annotation.tailrec
 import scala.math.pow
 
+def scalaVersion = "2.10"
+val scalaTestWithoutMacroVersion = "2.0.M8"
+val scalaTestWithMacroVersion = "2.0"
+
+def downloadFile(urlString: String, targetFile: File) {
+  println("Downloading " + urlString)
+  val url = new URL(urlString)
+  val connection = url.openConnection
+  val in = connection.getInputStream
+  val out = new FileOutputStream(targetFile)
+  out getChannel() transferFrom(Channels.newChannel(in), 0, Long.MaxValue)
+  in.close()
+  out.flush()
+  out.close()
+}
+
 val classFooter = """
   }
 }"""
@@ -103,14 +119,13 @@ def getOutputDir(baseOutputDir: File, testCount: Int): File = {
   outputDir
 }
 
-val scalatestOldJar = new File("scalatest-old.jar")
-val scalatestMacroJar = new File("scalatest-macro.jar")
-
+val scalatestOldJar = new File("scalatest_" + scalaVersion + "-" + scalaTestWithoutMacroVersion + ".jar")
 if (!scalatestOldJar.exists)
-  throw new RuntimeException(scalatestOldJar.getAbsolutePath + " not found.")
+  downloadFile("https://oss.sonatype.org/content/repositories/releases/org/scalatest/scalatest_" + scalaVersion + "/" + scalaTestWithoutMacroVersion + "/scalatest_" + scalaVersion + "-" + scalaTestWithoutMacroVersion + ".jar", scalatestOldJar)
 
+val scalatestMacroJar = new File("scalatest_" + scalaVersion + "-" + scalaTestWithMacroVersion + ".jar")
 if (!scalatestMacroJar.exists)
-  throw new RuntimeException(scalatestMacroJar.getAbsolutePath + " not found.")
+  downloadFile("https://oss.sonatype.org/content/repositories/releases/org/scalatest/scalatest_" + scalaVersion + "/" + scalaTestWithMacroVersion + "/scalatest_" + scalaVersion + "-" + scalaTestWithMacroVersion + ".jar", scalatestMacroJar)
 
 val baseDir = new File("assertMacro")
 if (baseDir.exists)
