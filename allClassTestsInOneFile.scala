@@ -124,15 +124,15 @@ def generateSpecs2Immutable(testCount: Int, targetDir: File): File = {
 package iSpecification
         
 import org.specs2cls._
-                    
-class ExampleSpec extends SpecificationClass { def is =
-  "Scala can"  ^
-""")
-      
+
+class ExampleSpec extends SpecificationClass { def is =""" + "\n" +
+"  s2\"\"\"Scala can  ^"
+)
+
     for (x <- 1 to testCount)
-      targetOut.write("    \"increment " + x + "\"  ! e" + x + "^\n")
-     
-    targetOut.write("    end\n")
+      targetOut.write("    \"increment " + x + "\"  $e" + x + "^\n")
+
+    targetOut.write("    \"\"\"\n")
         
     for (x <- 1 to testCount) 
       targetOut.write("def e" + x + " = " + x + " + 1 must beEqualTo (" + (x+1) + ")\n")
@@ -309,7 +309,7 @@ if (scalaVersion != "unknown") {
   fileCountFile.write(headers)
   fileSizeFile.write(headers)
 
-  styles.foreach { style => 
+  styles.foreach { style =>
     testTypes.foreach { testType =>
       durationFile.write(style.name) // + " " + testType.name) Don't write with MustMatchers to get all 4 names to fit on graph
       durationFile.flush()

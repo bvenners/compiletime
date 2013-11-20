@@ -168,14 +168,14 @@ package iSpecification
           
 import org.specs2._
           
-class ExampleSpec""" + fileNumber + """ extends Specification { def is =
-  "Scala can"  ^
-""")
+class ExampleSpec""" + fileNumber + " extends Specification { def is =\n" +
+"  s2\"\"\"Scala can  ^"
+)
       
     for (x <- 1 to testCount)
-      targetOut.write("    \"increment " + x + "\"  ! e" + x + "^\n")
+      targetOut.write("    \"increment " + x + "\"  $e" + x + "^\n")
      
-    targetOut.write("    end\n")
+    targetOut.write("    \"\"\"\n")
         
     for (x <- 1 to testCount) 
       targetOut.write("def e" + x + " = " + x + " + 1 must be equalTo (" + (x+1) + ")\n")
@@ -345,7 +345,7 @@ if (scalaVersion != "unknown") {
   fileCountFile.write(headers)
   fileSizeFile.write(headers)
 
-  styles.foreach { style => 
+  styles.foreach { style =>
     testTypes.foreach { testType => 
       try {
         durationFile.write(style.name) // Don't write with MustMatchers to get all 4 names to fit on graph
