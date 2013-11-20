@@ -190,3 +190,10 @@ if (scalautilsScalazStatDir.exists)
   generateChartFile(scalautilsScalazStatDir, new File(scalautilsScalazDir, "scalautilsScalaz-graph.html"))
 else
   println("scalautilsScalaz/stat directory does not exist, scalautilsScalaz/scalautilsScalaz-graph.html will not be generated.")
+
+val shapelessTablesDir = new File("shapelessTables")
+val shapelessTablesStatDir = new File(shapelessTablesDir, "stat")
+if (shapelessTablesStatDir.exists)
+  generateChartFile(shapelessTablesStatDir, new File(shapelessTablesDir, "shapelessTables-graph.html"))
+else
+  println("shapelessTables/stat directory does not exist, shapelessTables/shapelessTables-graph.html will not be generated.")

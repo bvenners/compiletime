@@ -1,2 +1,2 @@
 
-rm -rf allMethodTestsInOneFile allTestsInOneFile assertTestsInOneFile dataTables tenTestsPerFile testsIn100Files allClassTestsInOneFile scalautilsScalaz
+rm -rf allMethodTestsInOneFile allTestsInOneFile assertTestsInOneFile dataTables tenTestsPerFile testsIn100Files allClassTestsInOneFile scalautilsScalaz shapelessTables

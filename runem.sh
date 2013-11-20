@@ -11,4 +11,5 @@ scala allMethodTestsInOneFile.scala
 scala assertTestsInOneFile.scala
 scala allClassTestsInOneFile.scala
 scala scalautilsScalaz.scala
+scala shapelessTables.scala
 scala google-chart.scala
