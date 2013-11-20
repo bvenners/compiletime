@@ -67,8 +67,8 @@ def generateSourceFile(testCount: Int, targetDir: File, packageName: String, imp
 def assert2TestBodyFun(x: Int): String = "assert(" + x + " + 1 == " + (x+1) + ")"
 // Using assert(===)
 def assert3TestBodyFun(x: Int): String = "assert(" + x + " + 1 === " + (x+1) + ")"
-// Using must matchers
-def mustTestBodyFun(x: Int): String = x + " + 1 must be (" + (x+1) + ")"
+// Using should matchers
+def shouldTestBodyFun(x: Int): String = x + " + 1 should be (" + (x+1) + ")"
 
 // Spec 
 def specTestDefFun(x: Int): String = "def `increment " + x + "`"
@@ -250,7 +250,7 @@ if (scalaVersion != "unknown") {
 
   val testTypes = 
     Array(
-      TestType("with MustMatchers", "Must", Array("org.scalatest._", "matchers.MustMatchers._"), Array.empty, mustTestBodyFun)
+      TestType("with Matchers", "Should", Array("org.scalatest._", "Matchers._"), Array.empty, shouldTestBodyFun)
     )
 
   val testCounts = 
@@ -284,7 +284,7 @@ if (scalaVersion != "unknown") {
 
   styles.foreach { style =>
     testTypes.foreach { testType =>
-      durationFile.write(style.name) // + " " + testType.name) Don't write with MustMatchers to get all 4 names to fit on graph
+      durationFile.write(style.name) // + " " + testType.name) Don't write with Matchers to get all 4 names to fit on graph
       durationFile.flush()
       fileCountFile.write(style.name) // + " " + testType.name)
       fileCountFile.flush()

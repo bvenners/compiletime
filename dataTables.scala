@@ -70,7 +70,7 @@ def generateSourceFile(testCount: Int, targetDir: File): File = {
     targetOut.write("import org.scalatest._\n")
     targetOut.write("import prop.TableDrivenPropertyChecks._\n\n")
     
-    targetOut.write("class ExampleSpec extends WordSpec with MustMatchers {\n\n")
+    targetOut.write("class ExampleSpec extends WordSpec with Matchers {\n\n")
     
     targetOut.write("  \"Scala\" can {\n")
     targetOut.write("    \"increment integers\" in {\n\n")
@@ -87,7 +87,7 @@ def generateSourceFile(testCount: Int, targetDir: File): File = {
     targetOut.write("        )\n\n")
     
     targetOut.write("      forAll(examples) { (left, right, sum) => \n")
-    targetOut.write("        left + right must be (sum)\n")
+    targetOut.write("        left + right should be (sum)\n")
     targetOut.write("      }\n")
     
     targetOut.write("    }\n")

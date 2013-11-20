@@ -66,7 +66,7 @@ def generateSourceFile(testCount: Int, targetDir: File, packageName: String, imp
 // Using assert(===)
 def assert3TestBodyFun(x: Int): String = "assert(" + x + " + 1 === " + (x+1) + ")"
 // Using should matchers
-def mustTestBodyFun(x: Int): String = x + " + 1 should be (" + (x+1) + ")"
+def shouldTestBodyFun(x: Int): String = x + " + 1 should be (" + (x+1) + ")"
 
 // Spec 
 def specTestDefFun(x: Int): String = "def `increment " + x + "`"
@@ -164,8 +164,8 @@ if (scalaVersion != "unknown") {
   val testTypes = 
     Array(
       TestType("Triple Equal", "TripleEqual", Array("org.scalatest._"), Array.empty, assert3TestBodyFun), 
-      TestType("import ShouldMatchers", "ImportShould", Array("org.scalatest._", "matchers.ShouldMatchers._"), Array.empty, mustTestBodyFun), 
-      TestType("with ShouldMatchers", "MixinShould", Array("org.scalatest._"), Array("ShouldMatchers"), mustTestBodyFun)
+      TestType("import Matchers", "ImportMatchers", Array("org.scalatest._", "Matchers._"), Array.empty, shouldTestBodyFun),
+      TestType("with Matchers", "MixinMatchers", Array("org.scalatest._"), Array("Matchers"), shouldTestBodyFun)
     )
 
   val testCounts = 
