@@ -183,3 +183,10 @@ if (allClassTestsInOneFileStatDir.exists)
   generateChartFile(allClassTestsInOneFileStatDir, new File(allClassTestsInOneFileDir, "allClassTestsInOneFile-graph.html"))
 else
   println("allClassTestsInOneFile/stat directory does not exist, allClassTestsInOneFile/allClassTestsInOneFile-graph.html will not be generated.")
+
+val scalautilsScalazDir = new File("scalautilsScalaz")
+val scalautilsScalazStatDir = new File(scalautilsScalazDir, "stat")
+if (scalautilsScalazStatDir.exists)
+  generateChartFile(scalautilsScalazStatDir, new File(scalautilsScalazDir, "scalautilsScalaz-graph.html"))
+else
+  println("scalautilsScalaz/stat directory does not exist, scalautilsScalaz/scalautilsScalaz-graph.html will not be generated.")
