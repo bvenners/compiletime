@@ -93,10 +93,10 @@ def generateShapelessSourceFile(testCount: Int, targetDir: File): File = {
   val sumColWidth = List(sumColValueWidth, sumColHeader.length).max
 
   try {
-    targetOut.write("package shapeless\n\n")
+    targetOut.write("package shapelessTables\n\n")
 
     targetOut.write("import org.scalatest._\n")
-    targetOut.write("import shapeless._\n\n")
+    targetOut.write("import shapelessTable._\n\n")
 
     targetOut.write("class ExampleSpec extends WordSpec with Matchers {\n\n")
 
@@ -325,12 +325,12 @@ try {
     val outputDir = getOutputDir(baseOutputDir, testCount)
     val generatedDir = new File(baseGeneratedDir, "generated-" + testCount)
 
-    val generatedSrc = generateShapelessSourceFile(testCount, new File(generatedDir, "shapeless"))
+    val generatedSrc = generateShapelessSourceFile(testCount, new File(generatedDir, "shapelessTables"))
     val duration = compile(generatedSrc.getAbsolutePath, shapelessClasspath, outputDir.getAbsolutePath)
     durationFile.write("," + duration)
     durationFile.flush()
 
-    val (fileCount, fileSize) = getFileAndByteCount(new File(outputDir, "shapeless"))
+    val (fileCount, fileSize) = getFileAndByteCount(new File(outputDir, "shapelessTables"))
     fileCountFile.write("," + fileCount)
     fileCountFile.flush()
     fileSizeFile.write("," + fileSize)

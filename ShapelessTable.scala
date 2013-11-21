@@ -1,4 +1,6 @@
-package shapeless
+package shapelessTable
+
+import shapeless._
 
 class Table[TH, TR](hdrs: TH, rows: TR*)
 
