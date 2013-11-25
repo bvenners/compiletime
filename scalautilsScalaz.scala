@@ -20,7 +20,7 @@ def downloadFile(urlString: String, targetFile: File) {
 }
 
 def generateSourceFile(testCount: Int, targetDir: File, packageName: String, importStatements: Array[String],
-                       testDefFun: (Int) => String, testBodyFun: (Int) => String): File = {
+                       equalFun: (Int) => String): File = {
   targetDir.mkdirs()
   val targetFile = new File(targetDir, "ExampleSpec.scala")
   val targetOut = new BufferedWriter(new FileWriter(targetFile))
@@ -31,11 +31,8 @@ def generateSourceFile(testCount: Int, targetDir: File, packageName: String, imp
     }
     targetOut.write("\n")
     targetOut.write("class ExampleSpec {\n")
-    for (x <- 1 to testCount) {
-      targetOut.write("    " + testDefFun(x) + " {\n")
-      targetOut.write("      " + testBodyFun(x) + "\n")
-      targetOut.write("    }\n")
-    }
+    for (x <- 1 to testCount)
+      targetOut.write("    " + equalFun(x) + "\n")
     targetOut.write("}\n")
   }
   finally {
@@ -45,9 +42,7 @@ def generateSourceFile(testCount: Int, targetDir: File, packageName: String, imp
   targetFile
 }
 
-def bodyFun(x: Int): String = x + " + 1 === " + (x+1)
-
-def defFun(x: Int): String = "def `increment " + x + "`"
+def equalFun(x: Int): String = x + " + 1 === " + (x+1)
 
 def compile(srcFile: String, classpath: String, targetDir: String) = {
   import scala.collection.JavaConversions._
@@ -181,8 +176,7 @@ testCounts.foreach { testCount =>
     new File(generatedDir, "scalautils"), // target dir
     "scalautils", // package name
     Array("org.scalautils.TypeCheckedTripleEquals._"), // imports
-    defFun,
-    bodyFun)
+    equalFun)
   val duration = compile(generatedSrc.getAbsolutePath, scalautilsClasspath, outputDir.getAbsolutePath)
   durationFile.write("," + duration)
   durationFile.flush()
@@ -218,8 +212,7 @@ testCounts.foreach { testCount =>
     new File(generatedDir, "scalaz"), // target dir
     "scalaz", // package name
     Array("Scalaz._"), // imports
-    defFun,
-    bodyFun)
+    equalFun)
   val duration = compile(generatedSrc.getAbsolutePath, scalazClasspath, outputDir.getAbsolutePath)
   durationFile.write("," + duration)
   durationFile.flush()
