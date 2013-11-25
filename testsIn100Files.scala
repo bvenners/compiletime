@@ -80,8 +80,8 @@ def generateMultipleSourceFiles(testCount: Int, targetDir: File, packageName: St
 def assert2TestBodyFun(x: Int): String = "assert(" + x + " + 1 == " + (x+1) + ")"
 // Using assert(===)
 def assert3TestBodyFun(x: Int): String = "assert(" + x + " + 1 === " + (x+1) + ")"
-// Using must matchers
-def mustTestBodyFun(x: Int): String = x + " + 1 must be (" + (x+1) + ")"
+// Using should matchers
+def shouldTestBodyFun(x: Int): String = x + " + 1 should be (" + (x+1) + ")"
 
 // Spec 
 def specTestDefFun(x: Int): String = "def `increment " + x + "`"
@@ -146,15 +146,15 @@ def generateSpecs2Immutable(testCount: Int, targetDir: File, fileNumber: Int): F
 package iSpecification
           
 import org.specs2._
-          
-class ExampleSpec""" + fileNumber + """ extends Specification { def is =
-  "Scala can"  ^
-""")
-      
+
+class ExampleSpec""" + fileNumber + " extends Specification { def is =\n" +
+"  s2\"\"\"Scala can  ^"
+)
+
     for (x <- 1 to testCount)
-      targetOut.write("    \"increment " + x + "\"  ! e" + x + "^\n")
-     
-    targetOut.write("    end\n")
+      targetOut.write("    \"increment " + x + "\"  $e" + x + "^\n")
+
+    targetOut.write("    \"\"\"\n")
         
     for (x <- 1 to testCount) 
       targetOut.write("def e" + x + " = " + x + " + 1 must be equalTo (" + (x+1) + ")\n")
@@ -282,7 +282,7 @@ if (scalaVersion != "unknown") {
 
   val testTypes = 
     Array(
-      TestType("with MustMatchers", "Must", Array("org.scalatest._", "matchers.MustMatchers._"), Array.empty, mustTestBodyFun)
+      TestType("with Matchers", "Should", Array("org.scalatest._", "Matchers._"), Array.empty, shouldTestBodyFun)
     )
 
   val testCounts = 
@@ -305,7 +305,7 @@ if (scalaVersion != "unknown") {
   fileCountFile.write(headers)
   fileSizeFile.write(headers)
 
-  styles.foreach { style => 
+  styles.foreach { style =>
     testTypes.foreach { testType => 
       try {
         durationFile.write(style.name) // Don't write with MustMatchers to get all 4 names to fit on graph
