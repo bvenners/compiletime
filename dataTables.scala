@@ -85,11 +85,60 @@ def generateSourceFile(testCount: Int, targetDir: File): File = {
       targetOut.write("          (" + padValue(x.toString, leftColWidth, Right) + ", " + padValue("1", rightColWidth, Right) + ", " + padValue((x + 1).toString, sumColWidth, Right) + ")" + (if (x < testCount) ", \n" else "\n"))
     }
     targetOut.write("        )\n\n")
-    
+
     targetOut.write("      forAll(examples) { (left, right, sum) => \n")
     targetOut.write("        left + right should be (sum)\n")
     targetOut.write("      }\n")
     
+    targetOut.write("    }\n")
+    targetOut.write("  }\n")
+    targetOut.write("}\n")
+  }
+  finally {
+    targetOut.flush()
+    targetOut.close()
+  }
+  targetFile
+}
+
+def generateShapelessSourceFile(testCount: Int, targetDir: File): File = {
+  targetDir.mkdirs()
+  val targetFile = new File(targetDir, "ExampleSpec.scala")
+  val targetOut = new BufferedWriter(new FileWriter(targetFile))
+
+  val leftColValueWidth = testCount.toString.length
+  val sumColValueWidth = (testCount + 1).toString.length
+  val leftColWidth = List(leftColValueWidth, leftColHeader.length).max
+  val rightColWidth = rightColHeader.length
+  val sumColWidth = List(sumColValueWidth, sumColHeader.length).max
+
+  try {
+    targetOut.write("package shapelessTables\n\n")
+
+    targetOut.write("import org.scalatest._\n")
+    targetOut.write("import shapeless.TableChecker._\n")
+    targetOut.write("import shapelessTable._\n\n")
+
+    targetOut.write("class ExampleSpec extends WordSpec with Matchers {\n\n")
+
+    targetOut.write("  \"Scala\" can {\n")
+    targetOut.write("    \"increment integers\" in {\n\n")
+
+    targetOut.write("      val examples = \n")
+    targetOut.write("        Table(\n")
+
+    // print headers
+    targetOut.write("          (" + padValue(leftColHeader, leftColWidth, Left) + ", " + padValue(rightColHeader, rightColWidth, Left) + ", " + padValue(sumColHeader, sumColWidth, Left) + ")" + (if (testCount > 0) ", \n" else "\n"))
+    // print data rows
+    for (x <- 1 to testCount) {
+      targetOut.write("          (" + padValue(x.toString, leftColWidth, Right) + ", " + padValue("1", rightColWidth, Right) + ", " + padValue((x + 1).toString, sumColWidth, Right) + ")" + (if (x < testCount) ", \n" else "\n"))
+    }
+    targetOut.write("        )\n\n")
+
+    targetOut.write("      forAll(examples) { case (left, right, sum) => \n")
+    targetOut.write("        left + right should be (sum)\n")
+    targetOut.write("      }\n")
+
     targetOut.write("    }\n")
     targetOut.write("  }\n")
     targetOut.write("}\n")
@@ -165,6 +214,27 @@ def compile(srcFile: String, classpath: String, targetDir: String) = {
   end - start
 }
 
+def jar(jarFileName: String, classesDir: String) = {
+  import scala.collection.JavaConversions._
+
+  val command = List("jar", "cf", jarFileName, "-C", classesDir, ".")
+  val builder = new ProcessBuilder(command)
+  builder.redirectErrorStream(true)
+  val start = System.currentTimeMillis
+  val process = builder.start()
+
+  val stdout = new BufferedReader(new InputStreamReader(process.getInputStream))
+
+  var line = "Creating jar file " + jarFileName + "..."
+  while (line != null) {
+    println (line)
+    line = stdout.readLine
+  }
+
+  val end = System.currentTimeMillis
+  end - start
+}
+
 def getFileAndByteCount(srcDir: File) = {
   @tailrec
   def getFileAndByteCountAcc(dirList: Array[File], fileCount: Long, byteCount: Long): Tuple2[Long, Long] = {
@@ -215,9 +285,22 @@ if (scalaVersion != "unknown") {
   if (!specs2ScalazJar.exists)
     downloadFile("https://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-core_" + scalaVersion + "/" + scalazVersion + "/scalaz-core_" + scalaVersion + "-" + scalazVersion + ".jar", specs2ScalazJar)
 
+  val shapelessJar = new File("shapeless_2.10.2-2.0.0-SNAPSHOT.jar")
+  if (!shapelessJar.exists)
+    downloadFile("http://oss.sonatype.org/content/repositories/snapshots/com/chuusai/shapeless_2.10.2/2.0.0-SNAPSHOT/shapeless_2.10.2-2.0.0-SNAPSHOT.jar", shapelessJar)
+
   val baseDir = new File("dataTables")
   if (baseDir.exists)
     deleteDir(baseDir)
+
+  val shapelessTableJar = new File("shapeless-table.jar")
+  if (!shapelessTableJar.exists) {
+    val shapelessTableSource = new File("ShapelessTable.scala")
+    val shapelessTableClassDir = new File(baseDir, "shapeless-table")
+    shapelessTableClassDir.mkdirs()
+    compile(shapelessTableSource.getAbsolutePath, shapelessJar.getName, shapelessTableClassDir.getAbsolutePath)
+    jar(shapelessTableJar.getName, shapelessTableClassDir.getAbsolutePath)
+  }
     
   val statDir = new File(baseDir, "stat")
   statDir.mkdirs()
@@ -229,6 +312,8 @@ if (scalaVersion != "unknown") {
   val scalaTestClasspath = scalatestJar.getName
 
   val specs2Classpath = specs2Jar.getName + File.pathSeparator + specs2ScalazJar.getName
+
+  val shapelessClasspath = scalatestJar.getName + File.pathSeparator + shapelessJar.getName + File.pathSeparator + shapelessTableJar.getName
 
   val baseOutputDir = new File(baseDir, "output")
   baseOutputDir.mkdirs()
@@ -329,6 +414,45 @@ if (scalaVersion != "unknown") {
   }
   catch {
     case e: Throwable => 
+      e.printStackTrace()
+  }
+  finally {
+    durationFile.write("\n")
+    durationFile.flush()
+    fileCountFile.write("\n")
+    fileCountFile.flush()
+    fileSizeFile.write("\n")
+    fileSizeFile.flush()
+  }
+
+  // Shapeless Table
+  durationFile.write("shapeless")
+  durationFile.flush()
+  fileCountFile.write("shapeless")
+  fileCountFile.flush()
+  fileSizeFile.write("shapeless")
+  fileSizeFile.flush()
+
+  try {
+    testCounts.foreach { testCount =>
+      println("Working on Shapeless test count " + testCount + "...")
+      val outputDir = getOutputDir(baseOutputDir, testCount)
+      val generatedDir = new File(baseGeneratedDir, "generated-" + testCount)
+
+      val generatedSrc = generateShapelessSourceFile(testCount, new File(generatedDir, "shapelessTables"))
+      val duration = compile(generatedSrc.getAbsolutePath, shapelessClasspath, outputDir.getAbsolutePath)
+      durationFile.write("," + duration)
+      durationFile.flush()
+
+      val (fileCount, fileSize) = getFileAndByteCount(new File(outputDir, "shapelessTables"))
+      fileCountFile.write("," + fileCount)
+      fileCountFile.flush()
+      fileSizeFile.write("," + fileSize)
+      fileSizeFile.flush()
+    }
+  }
+  catch {
+    case e: Throwable =>
       e.printStackTrace()
   }
   finally {
