@@ -37,14 +37,14 @@ val classFooter = """
 sealed trait Align
 object Left extends Align
 object Right extends Align
-  
-def padValue(value: String, columnWidth:Int, align: Align): String = {
-  val padCount = columnWidth - value.length
+
+def padValue(value: String, align: Align): String = {
+  val padCount = 5 - value.length
   require(padCount >= 0)
   align match {
     case Left =>
       value + (" " * padCount)
-    case Right => 
+    case Right =>
       (" " * padCount) + value
   }
 }
@@ -57,12 +57,6 @@ def generateSourceFile(testCount: Int, targetDir: File): File = {
   targetDir.mkdirs()
   val targetFile = new File(targetDir, "ExampleSpec.scala")
   val targetOut = new BufferedWriter(new FileWriter(targetFile))
-  
-  val leftColValueWidth = testCount.toString.length
-  val sumColValueWidth = (testCount + 1).toString.length
-  val leftColWidth = List(leftColValueWidth, leftColHeader.length).max
-  val rightColWidth = rightColHeader.length
-  val sumColWidth = List(sumColValueWidth, sumColHeader.length).max
   
   try {
     targetOut.write("package WordSpecMust\n\n")
@@ -77,17 +71,21 @@ def generateSourceFile(testCount: Int, targetDir: File): File = {
     
     targetOut.write("      val examples = \n")
     targetOut.write("        Table(\n")
-    
+
     // print headers
-    targetOut.write("          (" + padValue(leftColHeader, leftColWidth, Left) + ", " + padValue(rightColHeader, rightColWidth, Left) + ", " + padValue(sumColHeader, sumColWidth, Left) + ")" + (if (testCount > 0) ", \n" else "\n"))
+    targetOut.write("          (" + padValue("\"c1\"", Left) + ", " + padValue("\"c2\"", Left) + ", " + padValue("\"c3\"", Left) + ", " +
+                    padValue("\"c4\"", Left) + ", " + padValue("\"c5\"", Left) + ", " + padValue("\"c6\"", Left) + ", " + padValue("\"c7\"", Left) + ", " +
+                    padValue("\"c8\"", Left) + ", " + padValue("\"c9\"", Left) + ", " + padValue("\"sum\"", Left) + ")" + (if (testCount > 0) ", \n" else "\n"))
     // print data rows
     for (x <- 1 to testCount) {
-      targetOut.write("          (" + padValue(x.toString, leftColWidth, Right) + ", " + padValue("1", rightColWidth, Right) + ", " + padValue((x + 1).toString, sumColWidth, Right) + ")" + (if (x < testCount) ", \n" else "\n"))
+      targetOut.write("          (" + padValue(x.toString, Right) + ", " + padValue("1", Right) + ", " + padValue("1", Right) + ", " +
+                      padValue("1", Right) + ", " + padValue("1", Right) + ", " + padValue("1", Right) + ", " + padValue("1", Right) + ", " +
+                      padValue("1", Right) + ", " + padValue("1", Right) + ", " + padValue((x + 8).toString, Right) + ")" + (if (x < testCount) ", \n" else "\n"))
     }
     targetOut.write("        )\n\n")
 
-    targetOut.write("      forAll(examples) { (left, right, sum) => \n")
-    targetOut.write("        left + right should be (sum)\n")
+    targetOut.write("      forAll(examples) { (c1, c2, c3, c4, c5, c6, c7, c8, c9, sum) => \n")
+    targetOut.write("        c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8 + c9 should be (sum)\n")
     targetOut.write("      }\n")
     
     targetOut.write("    }\n")
@@ -106,12 +104,6 @@ def generateShapelessSourceFile(testCount: Int, targetDir: File): File = {
   val targetFile = new File(targetDir, "ExampleSpec.scala")
   val targetOut = new BufferedWriter(new FileWriter(targetFile))
 
-  val leftColValueWidth = testCount.toString.length
-  val sumColValueWidth = (testCount + 1).toString.length
-  val leftColWidth = List(leftColValueWidth, leftColHeader.length).max
-  val rightColWidth = rightColHeader.length
-  val sumColWidth = List(sumColValueWidth, sumColHeader.length).max
-
   try {
     targetOut.write("package shapelessTables\n\n")
 
@@ -128,15 +120,19 @@ def generateShapelessSourceFile(testCount: Int, targetDir: File): File = {
     targetOut.write("        Table(\n")
 
     // print headers
-    targetOut.write("          (" + padValue(leftColHeader, leftColWidth, Left) + ", " + padValue(rightColHeader, rightColWidth, Left) + ", " + padValue(sumColHeader, sumColWidth, Left) + ")" + (if (testCount > 0) ", \n" else "\n"))
+    targetOut.write("          (" + padValue("\"c1\"", Left) + ", " + padValue("\"c2\"", Left) + ", " + padValue("\"c3\"", Left) + ", " +
+      padValue("\"c4\"", Left) + ", " + padValue("\"c5\"", Left) + ", " + padValue("\"c6\"", Left) + ", " + padValue("\"c7\"", Left) + ", " +
+      padValue("\"c8\"", Left) + ", " + padValue("\"c9\"", Left) + ", " + padValue("\"sum\"", Left) + ")" + (if (testCount > 0) ", \n" else "\n"))
     // print data rows
     for (x <- 1 to testCount) {
-      targetOut.write("          (" + padValue(x.toString, leftColWidth, Right) + ", " + padValue("1", rightColWidth, Right) + ", " + padValue((x + 1).toString, sumColWidth, Right) + ")" + (if (x < testCount) ", \n" else "\n"))
+      targetOut.write("          (" + padValue(x.toString, Right) + ", " + padValue("1", Right) + ", " + padValue("1", Right) + ", " +
+        padValue("1", Right) + ", " + padValue("1", Right) + ", " + padValue("1", Right) + ", " + padValue("1", Right) + ", " +
+        padValue("1", Right) + ", " + padValue("1", Right) + ", " + padValue((x + 8).toString, Right) + ")" + (if (x < testCount) ", \n" else "\n"))
     }
     targetOut.write("        )\n\n")
 
-    targetOut.write("      forAll(examples) { case (left, right, sum) => \n")
-    targetOut.write("        left + right should be (sum)\n")
+    targetOut.write("      forAll(examples) { case (c1, c2, c3, c4, c5, c6, c7, c8, c9, sum) => \n")
+    targetOut.write("        c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8 + c9 should be (sum)\n")
     targetOut.write("      }\n")
 
     targetOut.write("    }\n")
@@ -156,12 +152,6 @@ def generateSpecs2Mutable(testCount: Int, targetDir: File): File = {
   val targetFile = new File(targetDir, "ExampleSpec.scala")
   val targetOut = new BufferedWriter(new FileWriter(targetFile))
   
-  val leftColValueWidth = testCount.toString.length
-  val sumColValueWidth = (testCount + 1).toString.length
-  val leftColWidth = List(leftColValueWidth, leftColHeader.length).max
-  val rightColWidth = rightColHeader.length
-  val sumColWidth = List(sumColValueWidth, sumColHeader.length).max
-  
   try {    
     targetOut.write("package mSpecification\n\n")
     
@@ -172,16 +162,20 @@ def generateSpecs2Mutable(testCount: Int, targetDir: File): File = {
     
     targetOut.write("  \"Scala\" can {\n")
     targetOut.write("    \"increment integers\" in {\n\n")
-    
+
     // print headers
-    targetOut.write("          " + padValue(leftColHeader, leftColWidth, Left) + " | " + padValue(rightColHeader, rightColWidth, Left) + " | " + padValue(sumColHeader, sumColWidth, Left) + " |" + (if (testCount > 0) "\n" else "> {\n"))
+    targetOut.write("          " + padValue("\"c1\"", Left) + " | " + padValue("\"c2\"", Left) + " | " + padValue("\"c3\"", Left) + " | " +
+      padValue("\"c4\"", Left) + " | " + padValue("\"c5\"", Left) + " | " + padValue("\"c6\"", Left) + " | " + padValue("\"c7\"", Left) + " | " +
+      padValue("\"c8\"", Left) + " | " + padValue("\"c9\"", Left) + " | " + padValue("\"sum\"", Left) + " |" + (if (testCount > 0) "\n" else "> {\n"))
     // print data rows
     for (x <- 1 to testCount) {
-      targetOut.write("          " + padValue(x.toString, leftColWidth, Right) + " ! " + padValue("1", rightColWidth, Right) + " ! " + padValue((x + 1).toString, sumColWidth, Right) + " |" + (if (x < testCount) "\n" else "> {\n"))
+      targetOut.write("          " + padValue(x.toString, Right) + " ! " + padValue("1", Right) + " ! " + padValue("1", Right) + " ! " +
+        padValue("1", Right) + " ! " + padValue("1", Right) + " ! " + padValue("1", Right) + " ! " + padValue("1", Right) + " ! " +
+        padValue("1", Right) + " ! " + padValue("1", Right) + " ! " + padValue((x + 8).toString, Right) + " |" + (if (x < testCount) "\n" else "> {\n"))
     }
-    targetOut.write("            (left, right, sum) => left + right must_== sum\n")
+    targetOut.write("            (c1, c2, c3, c4, c5, c6, c7, c8, c9, sum) => c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8 + c9 must_== sum\n")
     targetOut.write("          }\n")
-    
+
     targetOut.write("    }\n")
     targetOut.write("  }\n")
     targetOut.write("}\n")
